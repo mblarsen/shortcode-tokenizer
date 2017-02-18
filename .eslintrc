@@ -1,0 +1,22 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  },
+  "extends": "standard",
+  "rules": {
+    // allow paren-less arrow functions
+    "arrow-parens": 0,
+    // allow async-await
+    "space-before-function-paren": ["error", {
+      "anonymous": "always",
+      "named": "never",
+      "asyncArrow": "ignore"
+    }],
+
+  },
+  "env": {
+    "browser": true,
+    "node": true
+  }
+}
