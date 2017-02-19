@@ -1,7 +1,6 @@
 # Shortcode Tokenizer and AST
 
-[![build status](http://img.shields.io/travis/mblarsen/shortcode-tokenizer.svg)](http://travis-ci.org/mblarsen/shortcode-tokenizer) [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/mblarsen/shortcode-tokenizer.svg)](http://isitmaintained.com/project/mblarsen/shortcode-tokenizer "Average time to resolve an issue") [![NPM version](http://img.shields.io/npm/v/shortcode-tokenizer.svg)](https://www.npmjs.com/package/shortcode-tokenizer/) [![](https://img.shields.io/npm/dm/shortcode-tokenizer.svg)](https://www.npmjs.com/package/shortcode-tokenizer/)
-[![Get help on Codementor](https://cdn.codementor.io/badges/get_help_github.svg)](https://www.codementor.io/mblarsen)  
+[![build status](http://img.shields.io/travis/mblarsen/shortcode-tokenizer.svg)](http://travis-ci.org/mblarsen/shortcode-tokenizer) [![NPM version](http://img.shields.io/npm/v/shortcode-tokenizer.svg)](https://www.npmjs.com/package/shortcode-tokenizer/) [![downloads](https://img.shields.io/npm/dm/shortcode-tokenizer.svg)](https://www.npmjs.com/package/shortcode-tokenizer/) [![Get help on Codementor](https://cdn.codementor.io/badges/get_help_github.svg)](https://www.codementor.io/mblarsen)  
 
 [![Beerpay](https://beerpay.io/mblarsen/shortcode-tokenizer/badge.svg?style=beer)](https://beerpay.io/mblarsen/shortcode-tokenizer) [![Beerpay](https://beerpay.io/mblarsen/shortcode-tokenizer/make-wish.svg?style=flat)](https://beerpay.io/mblarsen/shortcode-tokenizer)  
 
