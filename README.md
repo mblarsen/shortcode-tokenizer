@@ -1,11 +1,11 @@
 # Shortcode Tokenizer and AST
 
-[![build status](http://img.shields.io/travis/mblarsen/shortcode-tokenizer.svg)](http://travis-ci.org/mblarsen/shortcode-tokenizer) [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/mblarsen/shortcode-tokenizer.svg)](http://isitmaintained.com/project/mblarsen/shortcode-tokenizer "Average time to resolve an issue") [![Coverage Status](https://coveralls.io/repos/github/mblarsen/shortcode-tokenizer/badge.svg?branch=master)](https://coveralls.io/github/mblarsen/shortcode-tokenizer?branch=master) [![NPM version](http://img.shields.io/npm/v/shortcode-tokenizer.svg)](https://www.npmjs.com/package/shortcode-tokenizer/) [![](https://img.shields.io/npm/dm/shortcode-tokenizer.svg)](https://www.npmjs.com/package/shortcode-tokenizer/)
+[![build status](http://img.shields.io/travis/mblarsen/shortcode-tokenizer.svg)](http://travis-ci.org/mblarsen/shortcode-tokenizer) [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/mblarsen/shortcode-tokenizer.svg)](http://isitmaintained.com/project/mblarsen/shortcode-tokenizer "Average time to resolve an issue") [![NPM version](http://img.shields.io/npm/v/shortcode-tokenizer.svg)](https://www.npmjs.com/package/shortcode-tokenizer/) [![](https://img.shields.io/npm/dm/shortcode-tokenizer.svg)](https://www.npmjs.com/package/shortcode-tokenizer/)
 [![Get help on Codementor](https://cdn.codementor.io/badges/get_help_github.svg)](https://www.codementor.io/mblarsen)  
 
 [![Beerpay](https://beerpay.io/mblarsen/shortcode-tokenizer/badge.svg?style=beer)](https://beerpay.io/mblarsen/shortcode-tokenizer) [![Beerpay](https://beerpay.io/mblarsen/shortcode-tokenizer/make-wish.svg?style=flat)](https://beerpay.io/mblarsen/shortcode-tokenizer)  
 
-Tokenizes a string containing shortcodes (re-populized by WordPress) and outputs
+Tokenizes a string containing shortcodes (re-popularized by WordPress) and outputs
 it as an AST that can be used for further parsing.
 
 If you are only looking for simple transformations from a shortcode to a string
@@ -87,8 +87,8 @@ There are 5 token types:
 * TEXT: plain text. `body` contains the content.
 * OPEN: an open token, e.g. `[row]`.
 * SELF_CLOSING: a self-closing token `[post id=1/]`.
-* CLOSE: a close token, eg. `[/row]`. You will only see the left-over of these
-    tokens in the AST as OPEN tokens that have thier `isClosed` value set to
+* CLOSE: a close token, e.g. `[/row]`. You will only see the left-over of these
+    tokens in the AST as OPEN tokens that have their `isClosed` value set to
     true.
 * ERROR: when in non-strict mode offending tokens are converted to ERROR tokens
     and which behaves like TEXT nodes.
