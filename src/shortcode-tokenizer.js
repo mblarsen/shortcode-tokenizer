@@ -25,7 +25,7 @@ const RX_ENCLOSURE   = '\\[\\/?[a-zA-Z][^\\]]+\\]'
 const RX_OPEN        = '\\[(' + RX_KEY + ')(\\s' + RX_PARAMS + ')?\\]'
 /* matches self-closing code tokens [row/] */
 const RX_SELFCLOSING = '\\[(' + RX_KEY + ')(\\s' + RX_PARAMS + ')?\\s?\\/\\]'
-/* matches close code tokens [row/] */
+/* matches close code tokens [/row] */
 const RX_CLOSE       = '\\[\\/(' + RX_KEY + ')\\]'
 
 /* case-insensitive regular expressions */
