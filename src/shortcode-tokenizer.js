@@ -1,9 +1,9 @@
 /* tokens */
-export const TEXT = 'TEXT'
-export const ERROR = 'ERROR'
-export const OPEN = 'OPEN'
-export const CLOSE = 'CLOSE'
-export const SELF_CLOSING = 'SELF_CLOSING'
+const TEXT = 'TEXT'
+const ERROR = 'ERROR'
+const OPEN = 'OPEN'
+const CLOSE = 'CLOSE'
+const SELF_CLOSING = 'SELF_CLOSING'
 
 /* eslint-disable */
 
@@ -15,7 +15,7 @@ const RX_PARAM =       RX_KEY + '=\\d+\\.\\d+' +    // floats
                  '|' + RX_KEY + '=\\d+' +           // ints
                  '|' + RX_KEY + '="[^\\]"]*"' +     // double-qouted strings
                  '|' + RX_KEY + '=\'[^\\]\']*\'' +  // single-qouted strings
-                 '|' + RX_KEY                       // flag
+                 '|' + RX_KEY                       // flags
 const RX_PARAMS = '(?:(?:' + RX_PARAM + ')(?:(?!\\s+/?\\])\\s|))+'
 
 /* matches all code token types, used for quickly
