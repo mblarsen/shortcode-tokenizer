@@ -51,6 +51,9 @@
     "webpack": "1.13.2",
     "webpack-stream": "3.2.0"
   },
+  "peerDependencies": {
+    "babel-polyfill": "6.x"
+  },
   "babelBoilerplateOptions": {
     "entryFileName": "shortcode-tokenizer.js",
     "mainVarName": "shortcodeTokenizer"
