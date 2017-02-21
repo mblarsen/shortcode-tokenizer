@@ -67,11 +67,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	/* tokens */
-	var TEXT = exports.TEXT = 'TEXT';
-	var ERROR = exports.ERROR = 'ERROR';
-	var OPEN = exports.OPEN = 'OPEN';
-	var CLOSE = exports.CLOSE = 'CLOSE';
-	var SELF_CLOSING = exports.SELF_CLOSING = 'SELF_CLOSING';
+	var TEXT = 'TEXT';
+	var ERROR = 'ERROR';
+	var OPEN = 'OPEN';
+	var CLOSE = 'CLOSE';
+	var SELF_CLOSING = 'SELF_CLOSING';
 	
 	/* eslint-disable */
 	
@@ -83,7 +83,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'|' + RX_KEY + '=\\d+' + // ints
 	'|' + RX_KEY + '="[^\\]"]*"' + // double-qouted strings
 	'|' + RX_KEY + '=\'[^\\]\']*\'' + // single-qouted strings
-	'|' + RX_KEY; // flag
+	'|' + RX_KEY; // flags
 	var RX_PARAMS = '(?:(?:' + RX_PARAM + ')(?:(?!\\s+/?\\])\\s|))+';
 	
 	/* matches all code token types, used for quickly
@@ -93,7 +93,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var RX_OPEN = '\\[(' + RX_KEY + ')(\\s' + RX_PARAMS + ')?\\]';
 	/* matches self-closing code tokens [row/] */
 	var RX_SELFCLOSING = '\\[(' + RX_KEY + ')(\\s' + RX_PARAMS + ')?\\s?\\/\\]';
-	/* matches close code tokens [row/] */
+	/* matches close code tokens [/row] */
 	var RX_CLOSE = '\\[\\/(' + RX_KEY + ')\\]';
 	
 	/* case-insensitive regular expressions */

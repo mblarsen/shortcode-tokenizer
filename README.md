@@ -94,7 +94,7 @@ There are 5 token types:
 
 # API
 
-### `strict`
+### Property `strict`
 
 By default strict-mode is enabled and syntax errors will be thrown. Setting
 strict-mode to false will convert all errors into ERROR nodes.
@@ -119,11 +119,11 @@ t.ast('[code][/code]')
 
 Returns a generator for all the tokens.
 
-### `getTokens()`
+### `getTokens([input])`
 
 Returns all tokens as an array. Basically just: `Array.from(t.tokens())`
 
-### `ast()`
+### `ast([input])`
 
 Returns an AST created from the input.
 
