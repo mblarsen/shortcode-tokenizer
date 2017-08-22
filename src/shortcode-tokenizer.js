@@ -1,3 +1,5 @@
+/** @module ShortcodeTokenizer */
+
 /* tokens */
 const TEXT = 'TEXT'
 const ERROR = 'ERROR'
@@ -42,6 +44,7 @@ const rxSelfclosing = new RegExp(RX_SELFCLOSING, 'i')
  *
  * Note: assuming that this is not a TEXT token
  *
+ * @param {string} str
  * @returns {string} token type
  */
 function getTokenType(str) {
@@ -57,14 +60,17 @@ function getTokenType(str) {
 /**
  * Casts input string to native types.
  *
- * @returns {mixed} mixed value
+ * @param {string} value
+ * @returns {*} mixed value
  */
 function castValue(value) {
   value = value.replace(/(^['"]|['"]$)/g, '')
   if (/^\d+$/.test(value)) return +value
   if (/^\d+.\d+$/.test(value)) return parseFloat(value)
-  if (/^(true|false|yes|no)$/i.test(value)) {
-    value = value.toLowerCase()
+  if (/^['"]?(true|false|yes|no)['"]?$/i.test(value)) {
+    value = value
+      .replace(/(^['"]|['"]$)/g, '')
+      .toLowerCase()
     return value === 'true' || value === 'yes'
   }
   if (value === 'undefined') return typeof thisIsNotDefined
@@ -76,7 +82,7 @@ function castValue(value) {
  * Token class is used both as a token during tokenization/lexing
  * and as a node in the resulting AST.
  *
- * @private
+ * @access private
  */
 export class Token {
   constructor(type, body, pos = 0) {
@@ -91,7 +97,7 @@ export class Token {
   }
 
   /**
-   * @private
+   * @access private
    */
   init() {
     if (this.type !== TEXT && this.type !== ERROR) {
@@ -104,14 +110,14 @@ export class Token {
   }
 
   /**
-   * @private
+   * @access private
    */
   initName(match) {
     this.name = match[1]
   }
 
   /**
-   * @private
+   * @access private
    */
   initParams(paramStr) {
     const match = paramStr.match(rxParams)
@@ -128,7 +134,7 @@ export class Token {
   }
 
   /**
-   * @private
+   * @access private
    */
   matchBody() {
     let rx
@@ -152,7 +158,8 @@ export class Token {
   /**
    * Determines if this token can close the param token.
    *
-   * @public
+   * @access public
+   * @param {Token} token another token
    * @returns {boolean}
    */
   canClose(token) {
@@ -160,16 +167,16 @@ export class Token {
   }
 }
 
+/**
+ * Creates a new tokenizer.
+ *
+ * Pass in input as first param or later using `input()`
+ *
+ * @param {string} [input=null] Optional input to tokenize
+ * @param {boolean} [strict=true] mode default on
+ */
 export default class ShortcodeTokenizer {
 
-  /**
-   * Creates a new tokenizer.
-   *
-   * Pass in input as first param or later using `input()`
-   *
-   * @param {string} Optional input to tokenize
-   * @param {boolean} Strict mode default on
-   */
   constructor(input = null, strict = true) {
     this.strict = strict
     this.buf = null
@@ -183,6 +190,7 @@ export default class ShortcodeTokenizer {
   /**
    * Sets input buffer with a new input string.
    *
+   * @param {string} input template string
    * @throws {Error} Invalid input
    * @returns {this} returns this for chaining
    */
@@ -211,9 +219,9 @@ export default class ShortcodeTokenizer {
    * Creates a token generator.
    *
    * @throws {Error} Invalid input
-   * @returns {*function} token generator
+   * @returns {Token[]} An array of Token instances
    */
-  *tokens(input = null) {
+  tokens(input = null) {
     if (input) {
       this.input(input)
     }
@@ -223,23 +231,12 @@ export default class ShortcodeTokenizer {
     }
 
     let tokens = []
-    let token
+    let allTokens = []
     while ((tokens = this._next()) !== null) {
       tokens = Array.isArray(tokens) ? tokens : [tokens]
-      for (token of tokens) {
-        yield token
-      }
+      allTokens.push(...tokens)
     }
-  }
-
-  /**
-   * Convenience function for getting all tokens.
-   *
-   * @see tokens
-   * @returns {array} an array of tokens
-   */
-  getTokens(input = null) {
-    return Array.from(this.tokens(input))
+    return allTokens
   }
 
   /**

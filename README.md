@@ -1,8 +1,6 @@
 # Shortcode Tokenizer and AST
 
-[![build status](http://img.shields.io/travis/mblarsen/shortcode-tokenizer.svg)](http://travis-ci.org/mblarsen/shortcode-tokenizer) [![Test Coverage](https://codeclimate.com/github/mblarsen/shortcode-tokenizer/badges/coverage.svg)](https://codeclimate.com/github/mblarsen/shortcode-tokenizer) [![Code Climate](https://codeclimate.com/github/mblarsen/shortcode-tokenizer/badges/gpa.svg)](https://codeclimate.com/github/mblarsen/shortcode-tokenizer) [![NPM version](http://img.shields.io/npm/v/shortcode-tokenizer.svg)](https://www.npmjs.com/package/shortcode-tokenizer/) [![downloads](https://img.shields.io/npm/dm/shortcode-tokenizer.svg)](https://www.npmjs.com/package/shortcode-tokenizer/) [![Get help on Codementor](https://cdn.codementor.io/badges/get_help_github.svg)](https://www.codementor.io/mblarsen)  
-
-[![Beerpay](https://beerpay.io/mblarsen/shortcode-tokenizer/badge.svg?style=beer)](https://beerpay.io/mblarsen/shortcode-tokenizer) [![Beerpay](https://beerpay.io/mblarsen/shortcode-tokenizer/make-wish.svg?style=flat)](https://beerpay.io/mblarsen/shortcode-tokenizer)  
+[![build status](http://img.shields.io/travis/mblarsen/shortcode-tokenizer.svg)](http://travis-ci.org/mblarsen/shortcode-tokenizer) [![Test Coverage](https://codeclimate.com/github/mblarsen/shortcode-tokenizer/badges/coverage.svg)](https://codeclimate.com/github/mblarsen/shortcode-tokenizer) [![Code Climate](https://codeclimate.com/github/mblarsen/shortcode-tokenizer/badges/gpa.svg)](https://codeclimate.com/github/mblarsen/shortcode-tokenizer) [![NPM version](http://img.shields.io/npm/v/shortcode-tokenizer.svg)](https://www.npmjs.com/package/shortcode-tokenizer/) [![downloads](https://img.shields.io/npm/dm/shortcode-tokenizer.svg)](https://www.npmjs.com/package/shortcode-tokenizer/) [![Get help on Codementor](https://cdn.codementor.io/badges/get_help_github.svg)](https://www.codementor.io/mblarsen)
 
 Tokenizes a string containing shortcodes (re-popularized by WordPress) and outputs
 it as an AST that can be used for further parsing.
@@ -103,7 +101,7 @@ strict-mode to false will convert all errors into ERROR nodes.
 
 You can pass input in the constructor you can set it later using `input()`.
 
-Examples: 
+Examples:
 
 ```
 let t = new ShortcodeTokenizer('[code][/code]')
@@ -117,11 +115,7 @@ t.ast('[code][/code]')
 
 ### `tokens()`
 
-Returns a generator for all the tokens.
-
-### `getTokens([input])`
-
-Returns all tokens as an array. Basically just: `Array.from(t.tokens())`
+Returns all tokens.
 
 ### `ast([input])`
 

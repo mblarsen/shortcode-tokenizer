@@ -64,7 +64,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	/** @module ShortcodeTokenizer */
 	
 	/* tokens */
 	var TEXT = 'TEXT';
@@ -110,6 +114,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *
 	 * Note: assuming that this is not a TEXT token
 	 *
+	 * @param {string} str
 	 * @returns {string} token type
 	 */
 	function getTokenType(str) {
@@ -125,14 +130,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * Casts input string to native types.
 	 *
-	 * @returns {mixed} mixed value
+	 * @param {string} value
+	 * @returns {*} mixed value
 	 */
 	function castValue(value) {
 	  value = value.replace(/(^['"]|['"]$)/g, '');
 	  if (/^\d+$/.test(value)) return +value;
 	  if (/^\d+.\d+$/.test(value)) return parseFloat(value);
-	  if (/^(true|false|yes|no)$/i.test(value)) {
-	    value = value.toLowerCase();
+	  if (/^['"]?(true|false|yes|no)['"]?$/i.test(value)) {
+	    value = value.replace(/(^['"]|['"]$)/g, '').toLowerCase();
 	    return value === 'true' || value === 'yes';
 	  }
 	  if (value === 'undefined') return typeof thisIsNotDefined === 'undefined' ? 'undefined' : _typeof(thisIsNotDefined);
@@ -144,7 +150,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * Token class is used both as a token during tokenization/lexing
 	 * and as a node in the resulting AST.
 	 *
-	 * @private
+	 * @access private
 	 */
 	
 	var Token = exports.Token = function () {
@@ -164,7 +170,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	
 	  /**
-	   * @private
+	   * @access private
 	   */
 	
 	
@@ -181,7 +187,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    /**
-	     * @private
+	     * @access private
 	     */
 	
 	  }, {
@@ -191,7 +197,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    /**
-	     * @private
+	     * @access private
 	     */
 	
 	  }, {
@@ -211,7 +217,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	
 	    /**
-	     * @private
+	     * @access private
 	     */
 	
 	  }, {
@@ -238,7 +244,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Determines if this token can close the param token.
 	     *
-	     * @public
+	     * @access public
+	     * @param {Token} token another token
 	     * @returns {boolean}
 	     */
 	
@@ -252,16 +259,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return Token;
 	}();
 	
-	var ShortcodeTokenizer = function () {
+	/**
+	 * Creates a new tokenizer.
+	 *
+	 * Pass in input as first param or later using `input()`
+	 *
+	 * @param {string} [input=null] Optional input to tokenize
+	 * @param {boolean} [strict=true] mode default on
+	 */
 	
-	  /**
-	   * Creates a new tokenizer.
-	   *
-	   * Pass in input as first param or later using `input()`
-	   *
-	   * @param {string} Optional input to tokenize
-	   * @param {boolean} Strict mode default on
-	   */
+	
+	var ShortcodeTokenizer = function () {
 	  function ShortcodeTokenizer() {
 	    var input = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 	    var strict = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
@@ -280,6 +288,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  /**
 	   * Sets input buffer with a new input string.
 	   *
+	   * @param {string} input template string
 	   * @throws {Error} Invalid input
 	   * @returns {this} returns this for chaining
 	   */
@@ -315,122 +324,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Creates a token generator.
 	     *
 	     * @throws {Error} Invalid input
-	     * @returns {*function} token generator
+	     * @returns {Token[]} An array of Token instances
 	     */
 	
 	  }, {
 	    key: 'tokens',
-	    value: regeneratorRuntime.mark(function tokens() {
+	    value: function tokens() {
 	      var input = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 	
-	      var tokens, token, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step;
+	      if (input) {
+	        this.input(input);
+	      }
 	
-	      return regeneratorRuntime.wrap(function tokens$(_context) {
-	        while (1) {
-	          switch (_context.prev = _context.next) {
-	            case 0:
-	              if (input) {
-	                this.input(input);
-	              }
+	      if (typeof this.buf !== 'string') {
+	        throw new Error('Invalid input');
+	      }
 	
-	              if (!(typeof this.buf !== 'string')) {
-	                _context.next = 3;
-	                break;
-	              }
-	
-	              throw new Error('Invalid input');
-	
-	            case 3:
-	              tokens = [];
-	              token = void 0;
-	
-	            case 5:
-	              if (!((tokens = this._next()) !== null)) {
-	                _context.next = 35;
-	                break;
-	              }
-	
-	              tokens = Array.isArray(tokens) ? tokens : [tokens];
-	              _iteratorNormalCompletion = true;
-	              _didIteratorError = false;
-	              _iteratorError = undefined;
-	              _context.prev = 10;
-	              _iterator = tokens[Symbol.iterator]();
-	
-	            case 12:
-	              if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
-	                _context.next = 19;
-	                break;
-	              }
-	
-	              token = _step.value;
-	              _context.next = 16;
-	              return token;
-	
-	            case 16:
-	              _iteratorNormalCompletion = true;
-	              _context.next = 12;
-	              break;
-	
-	            case 19:
-	              _context.next = 25;
-	              break;
-	
-	            case 21:
-	              _context.prev = 21;
-	              _context.t0 = _context['catch'](10);
-	              _didIteratorError = true;
-	              _iteratorError = _context.t0;
-	
-	            case 25:
-	              _context.prev = 25;
-	              _context.prev = 26;
-	
-	              if (!_iteratorNormalCompletion && _iterator.return) {
-	                _iterator.return();
-	              }
-	
-	            case 28:
-	              _context.prev = 28;
-	
-	              if (!_didIteratorError) {
-	                _context.next = 31;
-	                break;
-	              }
-	
-	              throw _iteratorError;
-	
-	            case 31:
-	              return _context.finish(28);
-	
-	            case 32:
-	              return _context.finish(25);
-	
-	            case 33:
-	              _context.next = 5;
-	              break;
-	
-	            case 35:
-	            case 'end':
-	              return _context.stop();
-	          }
-	        }
-	      }, tokens, this, [[10, 21, 25, 33], [26,, 28, 32]]);
-	    })
-	
-	    /**
-	     * Convenience function for getting all tokens.
-	     *
-	     * @see tokens
-	     * @returns {array} an array of tokens
-	     */
-	
-	  }, {
-	    key: 'getTokens',
-	    value: function getTokens() {
-	      var input = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-	
-	      return Array.from(this.tokens(input));
+	      var tokens = [];
+	      var allTokens = [];
+	      while ((tokens = this._next()) !== null) {
+	        tokens = Array.isArray(tokens) ? tokens : [tokens];
+	        allTokens.push.apply(allTokens, _toConsumableArray(tokens));
+	      }
+	      return allTokens;
 	    }
 	
 	    /**
@@ -450,13 +366,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var ast = [];
 	      var parent = null;
 	      var token = void 0;
-	      var _iteratorNormalCompletion2 = true;
-	      var _didIteratorError2 = false;
-	      var _iteratorError2 = undefined;
+	      var _iteratorNormalCompletion = true;
+	      var _didIteratorError = false;
+	      var _iteratorError = undefined;
 	
 	      try {
-	        for (var _iterator2 = tokens[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-	          token = _step2.value;
+	        for (var _iterator = tokens[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	          token = _step.value;
 	
 	          if (token.type === TEXT) {
 	            if (!parent) {
@@ -500,16 +416,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	          }
 	        }
 	      } catch (err) {
-	        _didIteratorError2 = true;
-	        _iteratorError2 = err;
+	        _didIteratorError = true;
+	        _iteratorError = err;
 	      } finally {
 	        try {
-	          if (!_iteratorNormalCompletion2 && _iterator2.return) {
-	            _iterator2.return();
+	          if (!_iteratorNormalCompletion && _iterator.return) {
+	            _iterator.return();
 	          }
 	        } finally {
-	          if (_didIteratorError2) {
-	            throw _iteratorError2;
+	          if (_didIteratorError) {
+	            throw _iteratorError;
 	          }
 	        }
 	      }

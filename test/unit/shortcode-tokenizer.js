@@ -74,13 +74,13 @@ describe('ShortcodeTokenizer', () => {
 
     beforeEach(() => {
       tokenizer = new Tokenizer()
-      spy(tokenizer, 'getTokens')
+      spy(tokenizer, 'tokens')
     })
 
     it('should create a simple OPEN token', () => {
       let input = '[basket]'
       let basketToken = new Token(Tokenizer.OPEN, input)
-      expect(tokenizer.getTokens(input)).to.eql([basketToken])
+      expect(tokenizer.tokens(input)).to.eql([basketToken])
     })
 
     it('should throw syntax error on invalid input, OPEN', () => {
@@ -106,7 +106,7 @@ describe('ShortcodeTokenizer', () => {
 
     it('should create an OPEN token with three params', () => {
       let input = '[basket total=32 tax=3.2 checkout-button="Checkout"]'
-      const result = tokenizer.getTokens(input)
+      const result = tokenizer.tokens(input)
       expect(result[0].name).to.eql('basket')
       expect(result[0].params).to.eql({
         total: 32,
@@ -121,45 +121,45 @@ describe('ShortcodeTokenizer', () => {
 
     beforeEach(() => {
       tokenizer = new Tokenizer()
-      spy(tokenizer, 'getTokens')
+      spy(tokenizer, 'tokens')
     })
 
     it('should throw an error when not passing a string', () => {
-      expect(tokenizer.getTokens.bind(tokenizer)).to.throw('Invalid input')
-      expect(tokenizer.getTokens.bind(tokenizer, {})).to.throw('Invalid input')
-      expect(tokenizer.getTokens.bind(tokenizer, 1)).to.throw('Invalid input')
-      expect(tokenizer.getTokens).to.have.been.callCount(3)
+      expect(tokenizer.tokens.bind(tokenizer)).to.throw('Invalid input')
+      expect(tokenizer.tokens.bind(tokenizer, {})).to.throw('Invalid input')
+      expect(tokenizer.tokens.bind(tokenizer, 1)).to.throw('Invalid input')
+      expect(tokenizer.tokens).to.have.been.callCount(3)
     })
 
     it('should return a single element array when passed a string with no matches', () => {
-      expect(tokenizer.input('').getTokens()).to.be.an.instanceof(Array)
-      expect(tokenizer.input('').getTokens()).to.be.empty
-      expect(tokenizer.input(' ').getTokens()).to.eql([new Token(Tokenizer.TEXT, ' ')])
+      expect(tokenizer.input('').tokens()).to.be.an.instanceof(Array)
+      expect(tokenizer.input('').tokens()).to.be.empty
+      expect(tokenizer.input(' ').tokens()).to.eql([new Token(Tokenizer.TEXT, ' ')])
     })
 
     it('should reset internal position when re-running', () => {
-      expect(tokenizer.input('').getTokens()).to.be.an.instanceof(Array)
-      expect(tokenizer.input('').getTokens()).to.be.empty
-      expect(tokenizer.input(' ').getTokens()).to.eql([new Token(Tokenizer.TEXT, ' ')])
-      expect(tokenizer.input(' ').getTokens()).to.eql([new Token(Tokenizer.TEXT, ' ', 0)])
+      expect(tokenizer.input('').tokens()).to.be.an.instanceof(Array)
+      expect(tokenizer.input('').tokens()).to.be.empty
+      expect(tokenizer.input(' ').tokens()).to.eql([new Token(Tokenizer.TEXT, ' ')])
+      expect(tokenizer.input(' ').tokens()).to.eql([new Token(Tokenizer.TEXT, ' ', 0)])
     })
 
     it('should return a single element array when passed a string with no matches, more cases', () => {
-      expect(tokenizer.input('Hello').getTokens()).to.eql([new Token(Tokenizer.TEXT, 'Hello')])
-      expect(tokenizer.input('[Hello').getTokens()).to.eql([new Token(Tokenizer.TEXT, '[Hello')])
-      expect(tokenizer.input(']Hello').getTokens()).to.eql([new Token(Tokenizer.TEXT, ']Hello')])
-      expect(tokenizer.input(']Hello[').getTokens()).to.eql([new Token(Tokenizer.TEXT, ']Hello[')])
-      expect(tokenizer.input('][Hello').getTokens()).to.eql([new Token(Tokenizer.TEXT, '][Hello')])
-      expect(tokenizer.input('[]Hello').getTokens()).to.eql([new Token(Tokenizer.TEXT, '[]Hello')])
-      expect(tokenizer.input('Hello[]').getTokens()).to.eql([new Token(Tokenizer.TEXT, 'Hello[]')])
-      expect(tokenizer.input('Hello[ ]').getTokens()).to.eql([new Token(Tokenizer.TEXT, 'Hello[ ]')])
-      expect(tokenizer.input('Hel[ ]lo').getTokens()).to.eql([new Token(Tokenizer.TEXT, 'Hel[ ]lo')])
+      expect(tokenizer.input('Hello').tokens()).to.eql([new Token(Tokenizer.TEXT, 'Hello')])
+      expect(tokenizer.input('[Hello').tokens()).to.eql([new Token(Tokenizer.TEXT, '[Hello')])
+      expect(tokenizer.input(']Hello').tokens()).to.eql([new Token(Tokenizer.TEXT, ']Hello')])
+      expect(tokenizer.input(']Hello[').tokens()).to.eql([new Token(Tokenizer.TEXT, ']Hello[')])
+      expect(tokenizer.input('][Hello').tokens()).to.eql([new Token(Tokenizer.TEXT, '][Hello')])
+      expect(tokenizer.input('[]Hello').tokens()).to.eql([new Token(Tokenizer.TEXT, '[]Hello')])
+      expect(tokenizer.input('Hello[]').tokens()).to.eql([new Token(Tokenizer.TEXT, 'Hello[]')])
+      expect(tokenizer.input('Hello[ ]').tokens()).to.eql([new Token(Tokenizer.TEXT, 'Hello[ ]')])
+      expect(tokenizer.input('Hel[ ]lo').tokens()).to.eql([new Token(Tokenizer.TEXT, 'Hel[ ]lo')])
     })
 
     it('should parse a flag-type param', () => {
       let input = '[basket keep-alive]'
       let basketToken = new Token(Tokenizer.OPEN, input)
-      expect(tokenizer.input(input).getTokens()).to.eql([basketToken])
+      expect(tokenizer.input(input).tokens()).to.eql([basketToken])
     })
   })
 
