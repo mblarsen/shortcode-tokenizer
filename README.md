@@ -92,10 +92,15 @@ There are 5 token types:
 
 # API
 
-### Property `strict`
+### Property `options.strict`
 
 By default strict-mode is enabled and syntax errors will be thrown. Setting
 strict-mode to false will convert all errors into ERROR nodes.
+
+### Property `options.skipWhiteSpace`
+
+By default skipWhiteSpace is off. When turned on all whitespace is trimmed and
+if there is nothing left the TEXT node is skippid.
 
 ### constructor and `input()`
 

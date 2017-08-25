@@ -184,7 +184,7 @@ describe('ShortcodeTokenizer', () => {
     })
 
     it('should convert dangling CLOSE if not strict', () => {
-      tokenizer.strict = false
+      tokenizer.options.strict = false
       expect(tokenizer.input('[/code]').ast()).to.eql([new Token('ERROR', '[/code]')])
     })
 
@@ -303,6 +303,18 @@ describe('ShortcodeTokenizer', () => {
     it('should throw error on nested dangling close', () => {
       const astMethod = tokenizer.input('[row][col]Hello[/col][col]World[/col][/row][row][col]Foo[/col][/col]Bar[/col][/row]').ast
       expect(astMethod.bind(tokenizer)).to.throw('Unmatched close token: [/col]')
+    })
+
+    it('should skip empty text nodes', () => {
+      const openNode = new Token(Tokenizer.OPEN, '[code]', 0)
+      openNode.isClosed = true
+      openNode.children.push(new Token(Tokenizer.SELF_CLOSING, '[foo/]', 15))
+      tokenizer.options.skipWhiteSpace = true
+      const ast = tokenizer.input(`[code]
+        [foo/]
+      [/code]`).ast()
+      expect(ast).to.be.an.instanceof(Array)
+      expect(ast).to.eql([openNode])
     })
   })
 })

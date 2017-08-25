@@ -173,18 +173,39 @@ export class Token {
  * Pass in input as first param or later using `input()`
  *
  * @param {string} [input=null] Optional input to tokenize
- * @param {boolean} [strict=true] mode default on
+ * @param {Object} [options] options object
+ * @param {boolean} [options.strict=true] strict mode
+ * @param {boolean} [options.skipWhiteSpace=false] will ignore tokens containing only white space (basically all \s)
  */
 export default class ShortcodeTokenizer {
 
-  constructor(input = null, strict = true) {
-    this.strict = strict
+  constructor(input = null, options = {strict: true, skipWhiteSpace: false}) {
+    if (typeof options === 'boolean') {
+      options = {strict: options, skipWhiteSpace: false}
+    }
+    this.options = options
     this.buf = null
     this.originalBuf = null
     this.pos = 0
     if (input) {
       this.input(input)
     }
+  }
+
+  /**
+   * @deprecated use options.strict
+   */
+  get strict() {
+    console.warn(`Deprecated: use options.strict instead`)
+    return this.options.strict
+  }
+
+  /**
+   * @deprecated use options.strict
+   */
+  set strict(value) {
+    console.warn(`Deprecated: use options.strict = ${value} instead`)
+    this.options.strict = value
   }
 
   /**
@@ -253,6 +274,9 @@ export default class ShortcodeTokenizer {
     let token
     for (token of tokens) {
       if (token.type === TEXT) {
+        if (this.options.skipWhiteSpace && token.body.replace(/\s+/g, '').length === 0) {
+          continue
+        }
         if (!parent) {
           ast.push(token)
         } else {
@@ -269,7 +293,7 @@ export default class ShortcodeTokenizer {
         }
       } else if (token.type === CLOSE) {
         if (!parent || !token.canClose(parent)) {
-          if (this.strict) {
+          if (this.options.strict) {
             throw new SyntaxError('Unmatched close token: ' + token.body)
           } else {
             let err = new Token(ERROR, token.body)
@@ -294,7 +318,7 @@ export default class ShortcodeTokenizer {
       }
     }
     if (parent) {
-      if (this.strict) {
+      if (this.options.strict) {
         throw new SyntaxError('Unmatched open token: ' + parent.body)
       } else {
         ast.push(new Token(ERROR, token.body))

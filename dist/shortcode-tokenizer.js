@@ -265,18 +265,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * Pass in input as first param or later using `input()`
 	 *
 	 * @param {string} [input=null] Optional input to tokenize
-	 * @param {boolean} [strict=true] mode default on
+	 * @param {Object} [options] options object
+	 * @param {boolean} [options.strict=true] strict mode
+	 * @param {boolean} [options.skipWhiteSpace=false] will ignore tokens containing only white space (basically all \s)
 	 */
 	
 	
 	var ShortcodeTokenizer = function () {
 	  function ShortcodeTokenizer() {
 	    var input = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-	    var strict = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+	    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : { strict: true, skipWhiteSpace: false };
 	
 	    _classCallCheck(this, ShortcodeTokenizer);
 	
-	    this.strict = strict;
+	    if (typeof options === 'boolean') {
+	      options = { strict: options, skipWhiteSpace: false };
+	    }
+	    this.options = options;
 	    this.buf = null;
 	    this.originalBuf = null;
 	    this.pos = 0;
@@ -286,16 +291,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	  }
 	
 	  /**
-	   * Sets input buffer with a new input string.
-	   *
-	   * @param {string} input template string
-	   * @throws {Error} Invalid input
-	   * @returns {this} returns this for chaining
+	   * @deprecated use options.strict
 	   */
 	
 	
 	  _createClass(ShortcodeTokenizer, [{
 	    key: 'input',
+	
+	
+	    /**
+	     * Sets input buffer with a new input string.
+	     *
+	     * @param {string} input template string
+	     * @throws {Error} Invalid input
+	     * @returns {this} returns this for chaining
+	     */
 	    value: function input(_input) {
 	      if (typeof _input !== 'string') {
 	        throw new Error('Invalid input');
@@ -375,6 +385,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	          token = _step.value;
 	
 	          if (token.type === TEXT) {
+	            if (this.options.skipWhiteSpace && token.body.replace(/\s+/g, '').length === 0) {
+	              continue;
+	            }
 	            if (!parent) {
 	              ast.push(token);
 	            } else {
@@ -391,7 +404,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	          } else if (token.type === CLOSE) {
 	            if (!parent || !token.canClose(parent)) {
-	              if (this.strict) {
+	              if (this.options.strict) {
 	                throw new SyntaxError('Unmatched close token: ' + token.body);
 	              } else {
 	                var err = new Token(ERROR, token.body);
@@ -431,7 +444,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	
 	      if (parent) {
-	        if (this.strict) {
+	        if (this.options.strict) {
 	          throw new SyntaxError('Unmatched open token: ' + parent.body);
 	        } else {
 	          ast.push(new Token(ERROR, token.body));
@@ -482,6 +495,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.buf = null;
 	      }
 	      return tokens;
+	    }
+	  }, {
+	    key: 'strict',
+	    get: function get() {
+	      console.warn('Deprecated: use options.strict instead');
+	      return this.options.strict;
+	    }
+	
+	    /**
+	     * @deprecated use options.strict
+	     */
+	    ,
+	    set: function set(value) {
+	      console.warn('Deprecated: use options.strict = ' + value + ' instead');
+	      this.options.strict = value;
 	    }
 	  }]);
 	
