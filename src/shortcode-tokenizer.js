@@ -13,12 +13,12 @@ const SELF_CLOSING = 'SELF_CLOSING'
 const RX_KEY = '[a-zA-Z][a-zA-Z0-9_-]*'
 
 /* matches paramters */
-const RX_PARAM =       RX_KEY + '=\\d+\\.\\d+' +    // floats
-                 '|' + RX_KEY + '=\\d+' +           // ints
-                 '|' + RX_KEY + '=(true|false)' +   // bools
-                 '|' + RX_KEY + '="[^\\]"]*"' +     // double-qouted strings
-                 '|' + RX_KEY + '=\'[^\\]\']*\'' +  // single-qouted strings
-                 '|' + RX_KEY                       // flags
+const RX_PARAM =       RX_KEY + '=\\d+\\.\\d+' +         // floats
+                 '|' + RX_KEY + '=\\d+' +                // ints
+                 '|' + RX_KEY + '=(true|false|yes|no)' + // bools
+                 '|' + RX_KEY + '="[^\\]"]*"' +          // double-qouted strings
+                 '|' + RX_KEY + '=\'[^\\]\']*\'' +       // single-qouted strings
+                 '|' + RX_KEY                            // flags
 const RX_PARAMS = '(?:(?:' + RX_PARAM + ')(?:(?!\\s+/?\\])\\s|))+'
 
 /* matches all code token types, used for quickly
