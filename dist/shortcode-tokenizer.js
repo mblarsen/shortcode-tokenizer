@@ -85,7 +85,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* matches paramters */
 	var RX_PARAM = RX_KEY + '=\\d+\\.\\d+' + // floats
 	'|' + RX_KEY + '=\\d+' + // ints
-	'|' + RX_KEY + '=(true|false)' + // bools
+	'|' + RX_KEY + '=(true|false|yes|no)' + // bools
 	'|' + RX_KEY + '="[^\\]"]*"' + // double-qouted strings
 	'|' + RX_KEY + '=\'[^\\]\']*\'' + // single-qouted strings
 	'|' + RX_KEY; // flags
