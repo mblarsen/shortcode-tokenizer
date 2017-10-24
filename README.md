@@ -18,13 +18,13 @@ If you need more control this is the lib for you.
 
 # Install
 
-```
+```javascript
 npm install shortcode-tokenizer
 ```
 
 # Usage
 
-```
+```javascript
 import ShortcodeTokenizer from 'shortcode-tokenizer'
 
 const input = `
@@ -46,7 +46,7 @@ tokenizer.ast()
 The AST outputted is at root level an array of two nodes, a text node and a
 code-node:
 
-```
+```javascript
 [
     {
         type: 'TEXT',
@@ -111,7 +111,7 @@ You can pass input in the constructor you can set it later using `input()`.
 
 Examples:
 
-```
+```javascript
 let t = new ShortcodeTokenizer('[code][/code]')
 t.ast()
 
