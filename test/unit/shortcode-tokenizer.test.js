@@ -62,6 +62,46 @@ describe('ShortcodeTokenizer', () => {
     })
   })
 
+  describe('Constructor', () => {
+    it('Should all option when only passing boolean', () => {
+      let tokenizer
+      tokenizer = new Tokenizer(null, true)
+      expect(tokenizer.options.strict).to.be.true
+      expect(tokenizer.options.skipWhiteSpace).to.be.false
+      tokenizer = new Tokenizer(null, false)
+      expect(tokenizer.options.strict).to.be.false
+      expect(tokenizer.options.skipWhiteSpace).to.be.false
+    })
+
+    it('Should be able to take options object', () => {
+      let tokenizer
+      tokenizer = new Tokenizer(null, {})
+      expect(tokenizer.options.strict).to.be.true
+      expect(tokenizer.options.skipWhiteSpace).to.be.false
+      tokenizer = new Tokenizer(null, {strict: false, skipWhiteSpace: true})
+      expect(tokenizer.options.strict).to.be.false
+      expect(tokenizer.options.skipWhiteSpace).to.be.true
+    })
+
+    it('Should be able to take input and reset', () => {
+      const tokenizer = new Tokenizer('[code/]', {})
+      expect(tokenizer.buf).to.equal('[code/]')
+      expect(tokenizer.originalBuf).to.equal('[code/]')
+      expect(tokenizer.pos).to.equal(0)
+
+      tokenizer.buf = 'foo'
+      tokenizer.pos = 42
+      expect(tokenizer.buf).to.equal('foo')
+      expect(tokenizer.originalBuf).to.equal('[code/]')
+      expect(tokenizer.pos).to.equal(42)
+      tokenizer.reset()
+      expect(tokenizer.buf).to.equal('[code/]')
+      expect(tokenizer.originalBuf).to.equal('[code/]')
+      expect(tokenizer.pos).to.equal(0)
+
+    })
+  })
+
   describe('Token creation', () => {
     let tokenizer
 
@@ -74,7 +114,7 @@ describe('ShortcodeTokenizer', () => {
 
     beforeEach(() => {
       tokenizer = new Tokenizer()
-      spy(tokenizer, 'tokens')
+      sinon.spy(tokenizer, 'tokens')
     })
 
     it('should create a simple OPEN token', () => {
@@ -121,7 +161,7 @@ describe('ShortcodeTokenizer', () => {
 
     beforeEach(() => {
       tokenizer = new Tokenizer()
-      spy(tokenizer, 'tokens')
+      sinon.spy(tokenizer, 'tokens')
     })
 
     it('should throw an error when not passing a string', () => {
@@ -161,6 +201,25 @@ describe('ShortcodeTokenizer', () => {
       let basketToken = new Token(Tokenizer.OPEN, input)
       expect(tokenizer.input(input).tokens()).to.eql([basketToken])
     })
+
+    it('should parse map booleans', () => {
+      expect(tokenizer.input('[widget on="true"/]').tokens()[0].params).to.eql({on: true})
+      expect(tokenizer.input('[widget on=true/]').tokens()[0].params).to.eql({on: true})
+      expect(tokenizer.input('[widget on="yes"/]').tokens()[0].params).to.eql({on: true})
+      expect(tokenizer.input('[widget on=yes/]').tokens()[0].params).to.eql({on: true})
+      expect(tokenizer.input('[widget on="false"/]').tokens()[0].params).to.eql({on: false})
+      expect(tokenizer.input('[widget on=false/]').tokens()[0].params).to.eql({on: false})
+      expect(tokenizer.input('[widget on="no"/]').tokens()[0].params).to.eql({on: false})
+    })
+
+    it('should thow on unknown type', () => {
+      let newUp
+
+      newUp = () => (new Token())
+      expect(newUp).to.throw(Error, 'Unknown token')
+      newUp = () => (new Token('foo'))
+      expect(newUp).to.throw(Error, 'Unknown token')
+    })
   })
 
   describe('AST function', () => {
@@ -196,7 +255,7 @@ describe('ShortcodeTokenizer', () => {
       const match = new Token(Tokenizer.OPEN, '[code]', 0)
       match.isClosed = true
 
-      const ast = tokenizer.input('[code][/code]').ast()
+      const ast = tokenizer.input('[code][/code]').ast().pop()
       expect(ast).to.eql(ast)
       expect(ast.children).to.be.empty
     })
@@ -205,7 +264,7 @@ describe('ShortcodeTokenizer', () => {
       const match = new Token(Tokenizer.SELF_CLOSING, '[code/]', 0)
       match.isClosed = true
 
-      const ast = tokenizer.input('[code/]').ast()
+      const ast = tokenizer.input('[code/]').ast().pop()
       expect(ast).to.eql(ast)
       expect(ast.children).to.be.empty
     })

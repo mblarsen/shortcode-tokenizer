@@ -1,6 +1,9 @@
 # Shortcode Tokenizer and AST
 
-[![build status](http://img.shields.io/travis/mblarsen/shortcode-tokenizer.svg)](http://travis-ci.org/mblarsen/shortcode-tokenizer) [![Test Coverage](https://codeclimate.com/github/mblarsen/shortcode-tokenizer/badges/coverage.svg)](https://codeclimate.com/github/mblarsen/shortcode-tokenizer) [![Code Climate](https://codeclimate.com/github/mblarsen/shortcode-tokenizer/badges/gpa.svg)](https://codeclimate.com/github/mblarsen/shortcode-tokenizer) [![NPM version](http://img.shields.io/npm/v/shortcode-tokenizer.svg)](https://www.npmjs.com/package/shortcode-tokenizer/) [![downloads](https://img.shields.io/npm/dm/shortcode-tokenizer.svg)](https://www.npmjs.com/package/shortcode-tokenizer/) [![Get help on Codementor](https://cdn.codementor.io/badges/get_help_github.svg)](https://www.codementor.io/mblarsen)
+[![build status](http://img.shields.io/travis/mblarsen/shortcode-tokenizer.svg)](http://travis-ci.org/mblarsen/shortcode-tokenizer)
+[![Coverage Status](https://coveralls.io/repos/github/mblarsen/shortcode-tokenizer/badge.svg?branch=master)](https://coveralls.io/github/mblarsen/shortcode-tokenizer?branch=master)
+[![Known Vulnerabilities](https://snyk.io/test/github/mblarsen/shortcode-tokenizer/badge.svg)](https://snyk.io/test/github/mblarsen/shortcode-tokenizer)
+[![NPM version](http://img.shields.io/npm/v/shortcode-tokenizer.svg)](https://www.npmjs.com/package/shortcode-tokenizer/) [![](https://img.shields.io/npm/dm/shortcode-tokenizer.svg)](https://www.npmjs.com/package/shortcode-tokenizer/)
 
 Tokenizes a string containing shortcodes (re-popularized by WordPress) and outputs
 it as an AST that can be used for further parsing.
