@@ -74,8 +74,6 @@ function castValue(value) {
       .toLowerCase()
     return value === 'true' || value === 'yes'
   }
-  if (value === 'undefined') return typeof thisIsNotDefined
-  if (value === 'null') return null
   return value
 }
 
