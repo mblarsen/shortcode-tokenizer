@@ -182,7 +182,7 @@ export default class ShortcodeTokenizer {
     if (typeof options === 'boolean') {
       options = {strict: options, skipWhiteSpace: false}
     }
-    this.options = options
+    this.options = Object.assign({strict: true, skipWhiteSpace: false}, options)
     this.buf = null
     this.originalBuf = null
     this.pos = 0
