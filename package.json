@@ -6,7 +6,7 @@
   "scripts": {
     "test": "poi test && cat ./coverage/report-lcov/lcov.info | coveralls -v && rm -rf ./coverage ",
     "watch": "poi",
-    "build": "poi build",
+    "build": "poi build --format cjs",
     "preversion": "npm run test",
     "version": "npm run build && git add -A dist",
     "postversion": "git push && git push --tags"
