@@ -1,8 +1,14 @@
 require('babel-polyfill')
-const Tokenizer = require('../dist/shortcode-tokenizer.js').default
 
+const Tokenizer = require('../dist/shortcode-tokenizer.js').default
 const tokenizer = new Tokenizer('[code]Hello World[/code]')
-console.log(tokenizer.ast())
+
+const ast = tokenizer.ast();
+console.log(ast);
+
+// Reverse AST
+const template = tokenizer.buildTemplate(ast[0]);
+console.log(template);
 
 try {
   tokenizer.input('[/code]').ast()

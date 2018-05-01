@@ -154,6 +154,21 @@ describe('ShortcodeTokenizer', () => {
         'checkout-button': 'Checkout'
       })
     })
+
+    it('should return token as string', () => {
+      let input = '[basket total=32 tax=3.2 checkout-button="Checkout" on=yes]'
+      const result = tokenizer.tokens(input)
+
+      expect(result.toString()).to.equal('[basket total=32 tax=3.2 checkout-button="Checkout" on=true][/basket]')
+    })
+
+    it('change params should affect in building string', () => {
+      let input = '[basket total=32]'
+      const result = tokenizer.tokens(input)
+      result[0].params.tax = 3.2
+
+      expect(result.toString()).to.equal('[basket total=32 tax=3.2][/basket]')
+    })
   })
 
   describe('Tokenize function', () => {
@@ -250,6 +265,16 @@ describe('ShortcodeTokenizer', () => {
     it('should convert dangling CLOSE if not strict', () => {
       tokenizer.options.strict = false
       expect(tokenizer.input('[/code]').ast()).to.eql([new Token('ERROR', '[/code]')])
+    })
+
+    it('should throw exception if orfant OPEN', () => {
+      expect(tokenizer.input('[code]').ast.bind(tokenizer)).to.throw('Unmatched open token: [code]')
+    })
+
+    it('should add error token when strict mode is disabled and is unmatched open token', () => {
+      tokenizer.options.strict = false
+      const token = tokenizer.input('[row]').ast()
+      expect(token[1].type).to.be.equal(Tokenizer.ERROR)
     })
 
     it('should throw exception if orfant OPEN', () => {
@@ -369,6 +394,12 @@ describe('ShortcodeTokenizer', () => {
       expect(astMethod.bind(tokenizer)).to.throw('Unmatched close token: [/col]')
     })
 
+    it('should add error token when strict mode is disabled and is unmatched close token', () => {
+      tokenizer.options.strict = false
+      const token = tokenizer.input('[row][/col][/col][/row]').ast()[0]
+      expect(token.children[0].type).to.be.equal(Tokenizer.ERROR)
+    })
+
     it('should skip empty text nodes', () => {
       const openNode = new Token(Tokenizer.OPEN, '[code]', 0)
       openNode.isClosed = true
@@ -379,6 +410,87 @@ describe('ShortcodeTokenizer', () => {
       [/code]`).ast()
       expect(ast).to.be.an.instanceof(Array)
       expect(ast).to.eql([openNode])
+    })
+  })
+
+  describe('Build template function', () => {
+    let tokenizer
+    const makeToken = (value) => tokenizer.input(value).ast()[0]
+
+    beforeEach(() => {
+      tokenizer = new Tokenizer()
+    })
+
+    it('should return empty string on empty input', () => {
+      expect(tokenizer.buildTemplate(null)).to.be.empty
+    })
+
+    it('should throw syntax error on array input', () => {
+      const ast = tokenizer.input('[code][/code]').ast()
+
+      expect(tokenizer.buildTemplate.bind(null, ast)).to.throw('Expected Token instance.')
+    })
+
+    it('should return empty string when is unknown token type', () => {
+      tokenizer.options.strict = false
+      const token = tokenizer.input('[row][/cell][/cell][/row]').ast()[0]
+
+      expect(tokenizer.buildTemplate(token)).to.equal('[row][/row]')
+    })
+
+    it('should return base node', () => {
+      const code = '[code][/code]'
+      const token = makeToken(code)
+
+      expect(tokenizer.buildTemplate(token)).to.equal(code)
+    })
+
+    it('should return base node with text', () => {
+      const code = '[code]Lorem ipsum[/code]'
+      const token = makeToken(code)
+
+      expect(tokenizer.buildTemplate(token)).to.equal(code)
+    })
+
+    it('should return node with children', () => {
+      const code = `[code]
+        [row]Lorem ipsum[/row]
+        [row][cell][spacer/][/cell][/row]
+        [row][cell]Lorem ispum[spacer/][/cell][/row]
+      [/code]`
+
+      const token = makeToken(code)
+      expect(tokenizer.buildTemplate(token)).to.equal(code)
+    })
+
+    it('should return node with children and parameters', () => {
+      const code = `[code]
+        [cell size="10"]Lorem ipsum[/cell]
+        [cell size="10"][spacer show="true"/][/cell]
+      [/code]`
+
+      const token = makeToken(code)
+      expect(tokenizer.buildTemplate(token)).to.equal(code)
+    })
+
+    it('should return node with overwritten params', () => {
+      const token = makeToken('[code foo="bar"][/code]')
+
+      expect(tokenizer.buildTemplate(token, {})).to.equal('[code][/code]')
+    })
+
+    it('should return self closing node with overwritten params', () => {
+      const token = makeToken('[spacer /]')
+
+      expect(tokenizer.buildTemplate(token, { width: '20px' }))
+        .to.equal('[spacer width="20px"/]')
+    })
+
+    it('should return self closing node with overwritten params by string', () => {
+      const token = makeToken('[spacer height="50px"/]')
+
+      expect(tokenizer.buildTemplate(token, 'height="5px"'))
+        .to.equal('[spacer height="5px"/]')
     })
   })
 })

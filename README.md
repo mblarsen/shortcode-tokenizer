@@ -129,6 +129,10 @@ Returns all tokens.
 
 Returns an AST created from the input.
 
+### `buildTemplate([Token token], [object|string|null params=null], [bool deep=false])`
+
+Builds template on given token. You can overwrite params in root param by `params` and also in all nested setting `deep="true"` param.
+
 # Changelog
 
 See [CHANGELOG.md](https://github.com/mblarsen/shortcode-tokenizer/blob/master/CHANGELOG.md)

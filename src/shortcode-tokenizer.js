@@ -77,8 +77,6 @@ function castValue(value) {
 /**
  * Token class is used both as a token during tokenization/lexing
  * and as a node in the resulting AST.
- *
- * @access private
  */
 export class Token {
   constructor(type, body, pos = 0) {
@@ -127,6 +125,60 @@ export class Token {
       }
       return params
     }, {})
+  }
+
+  /**
+   * @return {string}
+   */
+  buildParams() {
+    let result = ''
+
+    for (const key in this.params) {
+      if (this.params.hasOwnProperty(key)) {
+        const value = this.params[key];
+        const typeOfValue = typeof value
+        if (typeOfValue === 'string') {
+          result = `${result} ${key}="${value}"`
+        } else if (typeOfValue === 'boolean') {
+          const value_ = value ? 'true' : 'false'
+          result = `${result} ${key}=${value_}`
+        } else {
+          result = `${result} ${key}=${value}`
+        }
+      }
+    }
+
+    return result
+  }
+
+  /**
+   * Convert token to string.
+   *
+   * @param {object|string|null} [params=null]
+   * @return {string}
+   */
+  toString(params = null) {
+    if (params instanceof Object) {
+      this.params = params
+    }
+
+    const computedParams = typeof params === 'string'
+      ? ` ${params.trim()}`
+      : this.buildParams()
+
+    switch (this.type) {
+      case TEXT:
+        return this.body
+
+      case OPEN:
+        return `[${this.name}${computedParams}]${this.children.length ? '{slot}' : ''}[/${this.name}]`
+
+      case SELF_CLOSING:
+        return `[${this.name}${computedParams}/]`
+
+      default:
+        return ''
+    }
   }
 
   /**
@@ -191,7 +243,8 @@ export default class ShortcodeTokenizer {
   /**
    * @deprecated use options.strict
    */
-  get strict() {
+  /* istanbul ignore next */
+   get strict() {
     console.warn(`Deprecated: use options.strict instead`)
     return this.options.strict
   }
@@ -199,6 +252,7 @@ export default class ShortcodeTokenizer {
   /**
    * @deprecated use options.strict
    */
+  /* istanbul ignore next */
   set strict(value) {
     console.warn(`Deprecated: use options.strict = ${value} instead`)
     this.options.strict = value
@@ -310,6 +364,7 @@ export default class ShortcodeTokenizer {
           parent.children.push(token)
         }
       } else {
+        /* istanbul ignore next */
         throw new SyntaxError('Unknown token: ' + token.type)
       }
     }
@@ -321,6 +376,35 @@ export default class ShortcodeTokenizer {
       }
     }
     return ast
+  }
+
+  /**
+   * Build template by given token.
+   *
+   * @param {Token} token
+   * @param {object|string|null} [params=null]
+
+   * @throws {Error} Unexpected token type.
+   * @returns {string}
+   */
+  buildTemplate(token, params = null) {
+    if (!token) {
+      return ''
+    }
+
+    if (!(token instanceof Token)) {
+      throw new Error('Expected Token instance.')
+    }
+
+    const build = (value) => {
+      const childs = value.children.map(
+        child => (child.children.length ? build(child) : child.toString())
+      )
+
+      return value.toString(params).replace('{slot}', childs.join(''))
+    }
+
+    return build(token)
   }
 
   /**
