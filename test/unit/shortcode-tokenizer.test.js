@@ -203,13 +203,18 @@ describe('ShortcodeTokenizer', () => {
     })
 
     it('should parse map booleans', () => {
-      expect(tokenizer.input('[widget on="true"/]').tokens()[0].params).to.eql({on: true})
+      expect(tokenizer.input('[widget on="true"/]').tokens()[0].params).to.eql({on: 'true'})
       expect(tokenizer.input('[widget on=true/]').tokens()[0].params).to.eql({on: true})
-      expect(tokenizer.input('[widget on="yes"/]').tokens()[0].params).to.eql({on: true})
+      expect(tokenizer.input('[widget on="yes"/]').tokens()[0].params).to.eql({on: 'yes'})
       expect(tokenizer.input('[widget on=yes/]').tokens()[0].params).to.eql({on: true})
-      expect(tokenizer.input('[widget on="false"/]').tokens()[0].params).to.eql({on: false})
+      expect(tokenizer.input('[widget on="false"/]').tokens()[0].params).to.eql({on: 'false'})
       expect(tokenizer.input('[widget on=false/]').tokens()[0].params).to.eql({on: false})
-      expect(tokenizer.input('[widget on="no"/]').tokens()[0].params).to.eql({on: false})
+      expect(tokenizer.input('[widget on="no"/]').tokens()[0].params).to.eql({on: 'no'})
+    })
+
+    it('should make destinction between numbers and strings', () => {
+      expect(tokenizer.input('[widget num=42/]').tokens()[0].params).to.eql({num: 42})
+      expect(tokenizer.input('[widget str="42"/]').tokens()[0].params).to.eql({str: '42'})
     })
 
     it('should thow on unknown type', () => {

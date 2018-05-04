@@ -65,16 +65,13 @@ function getTokenType(str) {
  * @returns {*} mixed value
  */
 function castValue(value) {
-  value = value.replace(/(^['"]|['"]$)/g, '')
-  if (/^\d+$/.test(value)) return +value
-  if (/^\d+.\d+$/.test(value)) return parseFloat(value)
-  if (/^['"]?(true|false|yes|no)['"]?$/i.test(value)) {
-    value = value
-      .replace(/(^['"]|['"]$)/g, '')
-      .toLowerCase()
+  if (/^\d+$/.test(value)) return Number(value)
+  if (/^\d+.\d+$/.test(value)) return Number(value)
+  if (/^(true|false|yes|no)$/i.test(value)) {
+    value = value.toLowerCase()
     return value === 'true' || value === 'yes'
   }
-  return value
+  return value.replace(/(^['"]|['"]$)/g, '')
 }
 
 /**
