@@ -129,9 +129,9 @@ Returns all tokens.
 
 Returns an AST created from the input.
 
-### `buildTemplate([Token token], [object|string|null params=null], [bool deep=false])`
+### `buildTemplate([Token token], [object|string|null params=null])`
 
-Builds template on given token. You can overwrite params in root param by `params` and also in all nested setting `deep="true"` param.
+Builds template on given token. If `params` is not specified the `token.params` object is used.
 
 # Changelog
 
