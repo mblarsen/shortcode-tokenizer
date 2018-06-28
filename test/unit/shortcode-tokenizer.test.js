@@ -30,8 +30,13 @@ describe('ShortcodeTokenizer', () => {
       expect('[code a=1]').to.match(Tokenizer.rxOpen)
       expect('[code a=1.1]').to.match(Tokenizer.rxOpen)
       expect('[code a="a"]').to.match(Tokenizer.rxOpen)
+      expect(
+        '[code a="Some text with <a href="https://google.com">a link</a>"]'
+      ).to.match(Tokenizer.rxOpen);
       expect('[code a=\'a\']').to.match(Tokenizer.rxOpen)
-
+      expect(
+        "[code a='Some text with <a href='https://google.com'>a link</a>']'"
+      ).to.match(Tokenizer.rxOpen);
       expect('[code ]').not.to.match(Tokenizer.rxOpen)
       expect('[code a ]').not.to.match(Tokenizer.rxOpen)
       expect('[code a=1 ]').not.to.match(Tokenizer.rxOpen)
