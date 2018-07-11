@@ -13,30 +13,45 @@ const SELF_CLOSING = 'SELF_CLOSING'
 const RX_KEY = '[a-zA-Z][a-zA-Z0-9_-]*'
 
 /* matches paramters */
-const RX_PARAM =       RX_KEY + '=\\d+\\.\\d+' +         // floats
-                 '|' + RX_KEY + '=\\d+' +                // ints
-                 '|' + RX_KEY + '=(true|false|yes|no)' + // bools
-                 '|' + RX_KEY + '="[^\\]"]*(<.*".*)?"' +          // double-qouted strings
-                 '|' + RX_KEY + '=\'[^\\]\']*(<.*\'.*)?\'' +       // single-qouted strings
-                 '|' + RX_KEY                            // flags
+
+const RX_PARAM_BASE = RX_KEY + '=\\d+\\.\\d+' +       // floats
+                '|' + RX_KEY + '=\\d+' +              // ints
+                '|' + RX_KEY + '=(true|false|yes|no)' // bools
+
+const RX_PARAM = RX_PARAM_BASE +
+           '|' + RX_KEY + '="[^\\]"]*"' +    // double-qouted strings
+           '|' + RX_KEY + '=\'[^\\]\']*\'' + // single-qouted strings
+           '|' + RX_KEY                      // flags
+
+const RX_PARAM_HTML = RX_PARAM_BASE +
+                   '|' + RX_KEY + '="[^\\]"]*(<.*".*)?"' +     // double-qouted strings
+                   '|' + RX_KEY + '=\'[^\\]\']*(<.*\'.*)?\'' + // single-qouted strings
+                   '|' + RX_KEY                                // flags
+
 const RX_PARAMS = '(?:(?:' + RX_PARAM + ')(?:(?!\\s+/?\\])\\s|))+'
+const RX_PARAMS_HTML = '(?:(?:' + RX_PARAM_HTML + ')(?:(?!\\s+/?\\])\\s|))+'
 
 /* matches all code token types, used for quickly
    finding potentia code tokens */
-const RX_ENCLOSURE   = '\\[\\/?[a-zA-Z][^\\]]+\\]'
+const RX_ENCLOSURE        = '\\[\\/?[a-zA-Z][^\\]]+\\]'
 /* matches opening code tokens [row] */
-const RX_OPEN        = '\\[(' + RX_KEY + ')(\\s' + RX_PARAMS + ')?\\]'
+const RX_OPEN             = '\\[(' + RX_KEY + ')(\\s' + RX_PARAMS + ')?\\]'
+const RX_OPEN_HTML        = '\\[(' + RX_KEY + ')(\\s' + RX_PARAMS_HTML + ')?\\]'
 /* matches self-closing code tokens [row/] */
-const RX_SELFCLOSING = '\\[(' + RX_KEY + ')(\\s' + RX_PARAMS + ')?\\s?\\/\\]'
+const RX_SELFCLOSING      = '\\[(' + RX_KEY + ')(\\s' + RX_PARAMS + ')?\\s?\\/\\]'
+const RX_SELFCLOSING_HTML = '\\[(' + RX_KEY + ')(\\s' + RX_PARAMS_HTML + ')?\\s?\\/\\]'
 /* matches close code tokens [/row] */
-const RX_CLOSE       = '\\[\\/(' + RX_KEY + ')\\]'
+const RX_CLOSE            = '\\[\\/(' + RX_KEY + ')\\]'
 
 /* case-insensitive regular expressions */
-const rxParams      = new RegExp(RX_PARAMS.substring(0, RX_PARAMS.length - 1), 'ig')
-const rxEnclosure   = new RegExp(RX_ENCLOSURE, 'i')
-const rxOpen        = new RegExp(RX_OPEN, 'i')
-const rxClose       = new RegExp(RX_CLOSE, 'i')
-const rxSelfclosing = new RegExp(RX_SELFCLOSING, 'i')
+const rxParams          = new RegExp(RX_PARAMS.substring(0, RX_PARAMS.length - 1), 'ig')
+const rxParamsHtml      = new RegExp(RX_PARAMS_HTML.substring(0, RX_PARAMS_HTML.length - 1), 'ig')
+const rxEnclosure       = new RegExp(RX_ENCLOSURE, 'i')
+const rxOpen            = new RegExp(RX_OPEN, 'i')
+const rxOpenHtml        = new RegExp(RX_OPEN_HTML, 'i')
+const rxClose           = new RegExp(RX_CLOSE, 'i')
+const rxSelfclosing     = new RegExp(RX_SELFCLOSING, 'i')
+const rxSelfclosingHtml = new RegExp(RX_SELFCLOSING_HTML, 'i')
 
 /* eslint-enable */
 
@@ -114,7 +129,7 @@ export class Token {
    * @access private
    */
   initParams(paramStr) {
-    const match = paramStr.match(rxParams)
+    const match = paramStr.match(Token.withHtml ? rxParamsHtml : rxParams)
     this.params = match.reduce((params, paramToken) => {
       paramToken = paramToken.trim()
       let equal = paramToken.indexOf('=')
@@ -189,9 +204,9 @@ export class Token {
     if (this.type === CLOSE) {
       rx = rxClose
     } else if (this.type === OPEN) {
-      rx = rxOpen
+      rx = Token.withHtml ? rxOpenHtml : rxOpen
     } else if (this.type === SELF_CLOSING) {
-      rx = rxSelfclosing
+      rx = Token.withHtml ? rxSelfclosingHtml : rxSelfclosing
     } else {
       throw new SyntaxError('Unknown token: ' + this.type)
     }
@@ -223,21 +238,22 @@ export class Token {
  * @param {string} [input=null] Optional input to tokenize
  * @param {Object} [options] options object
  * @param {boolean} [options.strict=true] strict mode
+ * @param {boolean} [options.html=false] allow HTML in params
  * @param {boolean} [options.skipWhiteSpace=false] will ignore tokens containing only white space (basically all \s)
  */
 export default class ShortcodeTokenizer {
-
-  constructor(input = null, options = {strict: true, skipWhiteSpace: false}) {
+  constructor(input = null, options = {strict: true, skipWhiteSpace: false, html: false}) {
     if (typeof options === 'boolean') {
-      options = {strict: options, skipWhiteSpace: false}
+      options = {strict: options, skipWhiteSpace: false, html: false}
     }
-    this.options = Object.assign({strict: true, skipWhiteSpace: false}, options)
+    this.options = Object.assign({strict: true, skipWhiteSpace: false, html: false}, options)
     this.buf = null
     this.originalBuf = null
     this.pos = 0
     if (input) {
       this.input(input)
     }
+    Token.withHtml = this.options.html
   }
 
   /**
@@ -464,8 +480,11 @@ Object.assign(ShortcodeTokenizer, {
   CLOSE,
   SELF_CLOSING,
   rxParams,
+  rxParamsHtml,
   rxEnclosure,
   rxOpen,
+  rxOpenHtml,
   rxClose,
-  rxSelfclosing
+  rxSelfclosing,
+  rxSelfclosingHtml
 })

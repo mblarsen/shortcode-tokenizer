@@ -30,17 +30,16 @@ describe('ShortcodeTokenizer', () => {
       expect('[code a=1]').to.match(Tokenizer.rxOpen)
       expect('[code a=1.1]').to.match(Tokenizer.rxOpen)
       expect('[code a="a"]').to.match(Tokenizer.rxOpen)
-      expect(
-        '[code a="Some text with <a href="https://google.com">a link</a>"]'
-      ).to.match(Tokenizer.rxOpen);
-      expect('[code a=\'a\']').to.match(Tokenizer.rxOpen)
-      expect(
-        "[code a='Some text with <a href='https://google.com'>a link</a>']'"
-      ).to.match(Tokenizer.rxOpen);
       expect('[code ]').not.to.match(Tokenizer.rxOpen)
       expect('[code a ]').not.to.match(Tokenizer.rxOpen)
       expect('[code a=1 ]').not.to.match(Tokenizer.rxOpen)
       expect('[code a=1.]').not.to.match(Tokenizer.rxOpen)
+    })
+
+    it('should match open tag, with HTML', function () {
+      expect('[code a="Some text with <a href="https://google.com">a link</a>"]').to.match(Tokenizer.rxOpenHtml);
+      expect('[code a=\'a\']').to.match(Tokenizer.rxOpenHtml)
+      expect("[code a='Some text with <a href=\"https://google.com\"><ul>a <li>link</ul></a>']'").to.match(Tokenizer.rxOpenHtml);
     })
 
     it('should match self-closing tag', function () {
@@ -498,4 +497,29 @@ describe('ShortcodeTokenizer', () => {
         .to.equal('[spacer height="5px"/]')
     })
   })
+
+  describe('HTML content', () => {
+    let tokenizer
+
+    beforeEach(() => {
+      tokenizer = new Tokenizer(null, {html: true})
+    })
+
+    it('Token.withHtml should be set', function () {
+      expect(Token.withHtml).to.be.equal(true)
+    })
+
+    it('create a single token with html in param', function () {
+      const paramValue = `Some text with <a href="https://google.com">a link</a>`
+      const input = `[code a="${paramValue}" /]`
+      const [token] = tokenizer.input(input).ast()
+      expect(token.type).to.be.equal(Tokenizer.SELF_CLOSING)
+      expect(token.children.length).to.be.equal(0)
+      console.log(token.params)
+      expect(token.params).to.be.equal({
+        a: paramValue
+      })
+    })
+  })
+
 })
