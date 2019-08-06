@@ -1,3 +1,5 @@
+# DEPRECATED: This is no longer maintained
+
 # Shortcode Tokenizer and AST
 
 [![build status](http://img.shields.io/travis/mblarsen/shortcode-tokenizer.svg)](http://travis-ci.org/mblarsen/shortcode-tokenizer)
